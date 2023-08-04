@@ -32,7 +32,7 @@ class dbusService:
 
     def update_values(self):
         while True:
-            msg = self.can.recv(timeout=0)
+            msg = self.can.recv(timeout=0.1)
             if msg is not None:
                 self.rpm = msg.data[0] + msg.data[1] * 256
                 self.distance = msg.data[2] + msg.data[3] * 256
