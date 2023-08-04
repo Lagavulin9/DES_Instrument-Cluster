@@ -1,52 +1,48 @@
 import os
 import can
+import threading
 from pydbus import SessionBus
 from gi.repository import GLib
 
-CAN_ID = "can0"
+CAN_CHANNEL = "can0"
 
 class dbusService:
-    '''
-    DBus Service Example
-    '''
     dbus = """
     <node>
         <interface name='com.example.dbusService'>
-            <method name='getDistance'>
-                <arg type='f' name='distance' direction='out'/>
+            <method name='getDis'>
+                <arg type='i' name='message' direction='out'/>
             </method>
-            <method name='getSpeed'>
-                <arg type='f' name='speed' direction='out'/>
+            <method name='getRPM'>
+                <arg type='i' name='message' direction='out'/>
             </method>
         </interface>
     </node>
     """
 
     def __init__(self):
-        os.system(f'sudo ifconfig {CAN_ID} down')
-        os.system(f'sudo ip link set {CAN_ID} up type can bitrate 500000 dbitrate 8000000 restart-ms 1000 berr-reporting on fd on')
-        self.can = can.interface.Bus(channel = CAN_ID, bustype = 'socketcan')
+        os.system(f'sudo ifconfig {CAN_CHANNEL} down')
+        os.system(f'sudo ip link set {CAN_CHANNEL} up type can bitrate 500000 dbitrate 8000000 restart-ms 1000 berr-reporting on fd on')
+        self.can = can.interface.Bus(channel=CAN_CHANNEL, bustype='socketcan')
+        self.rpm = 0
+        self.distance = 0
+        self.update_thread = threading.Thread(target=self.update_values)
+        self.update_thread.daemon = True  # Ensure thread is killed on program exit
+        self.update_thread.start()
 
-    def rpm2speed(self, rpm) -> float:
-        #TODO:add some equation here
-        speed = rpm 
-        return speed
+    def update_values(self):
+        while True:
+            msg = self.can.recv(timeout=0)
+            if msg is not None:
+                self.rpm = msg.data[0] + msg.data[1] * 256
+                self.distance = msg.data[2] + msg.data[3] * 256
 
-    def getDistance(self) -> float:
-        msg = self.can.recv(10.0);
-        if msg is None:
-            return "No message recieved"
-        distance = msg.data[2] + msg.data[3]*256
-        return distance
+    def getDis(self) -> int:
+        return self.distance
 
-    def getSpeed(self) -> float:
-        msg = self.can.recv(10.0);
-        if msg is None:
-            return "No message recieved"
-        rpm = msg.data[0] + msg.data[1]*256
-        speed = self.rpm2speed(rpm)
-        return speed
-            
+    def getRPM(self) -> int:
+        return self.rpm
+
 
 bus = SessionBus()
 bus.publish("com.example.dbusService", dbusService())
