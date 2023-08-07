@@ -6,10 +6,10 @@ from gi.repository import GLib
 
 CAN_CHANNEL = "can0"
 
-class dbusService:
+class canService:
     dbus = """
     <node>
-        <interface name='com.example.dbusService'>
+        <interface name='com.example.canService'>
             <method name='getDis'>
                 <arg type='i' name='message' direction='out'/>
             </method>
@@ -45,7 +45,7 @@ class dbusService:
 
 
 bus = SessionBus()
-bus.publish("com.example.dbusService", dbusService())
+bus.publish("com.example.canService", canService())
 
 loop = GLib.MainLoop()
 loop.run()
