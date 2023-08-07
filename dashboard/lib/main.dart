@@ -8,7 +8,8 @@ import 'package:dbus/dbus.dart';
 
 class DBusService {
   late final DBusClient client;
-  late final DBusRemoteObject object;
+  late final DBusRemoteObject canObject;
+  late final DBusRemoteObject piracerObject;
 
   DBusService() {
     _initializeDBus();
@@ -16,9 +17,12 @@ class DBusService {
 
   void _initializeDBus() {
     client = DBusClient.session();
-    object = DBusRemoteObject(client,
-        name: 'com.example.dbusService',
-        path: DBusObjectPath('/com/example/dbusService'));
+    canObject = DBusRemoteObject(client,
+        name: 'com.example.canService',
+        path: DBusObjectPath('/com/example/canService'));
+    piracerObject = DBusRemoteObject(client,
+        name: 'com.example.piracerService',
+        path: DBusObjectPath('/com/example/piracerService'));
     // Your initialization code here
   }
 }
@@ -81,6 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Timer? _timer;
   double speed = 0;
   double rpm = 0;
+  double battery = 0;
   final interface = DBusService();
 
   @override
@@ -110,14 +115,18 @@ class _MyHomePageState extends State<MyHomePage> {
     // Add your code here to update the speed or do any other tasks
 
     try {
-      var reply = await interface.object
-          .callMethod("com.example.dbusService", "getRPM", []);
+      var reply = await interface.canObject
+          .callMethod("com.example.canService", "getRPM", []);
       int result = (reply.returnValues[0] as DBusInt32).value;
       if (result != -1) {
         rpm = result.toDouble();
         speed = rpm * 0.03;
         // print("RPM: $rpm, speed: $speed");
       }
+      reply = await interface.piracerObject
+          .callMethod("com.example.piracerService", "getVoltage", []);
+      result = (reply.returnValues[0] as DBusInt32).value;
+      battery = 0.2777 * result * result - 5.9451 * result + 31.809;
     } on DBusServiceUnknownException {
       debugPrint('Notification service not available');
     }
@@ -145,7 +154,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: FuelGaugeWidget(
                         min: 0,
                         max: 100,
-                        fuel: 70,
+                        fuel: battery,
                       ),
                     ),
                   ),
