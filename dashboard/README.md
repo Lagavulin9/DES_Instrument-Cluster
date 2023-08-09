@@ -1,16 +1,47 @@
-# dashboard!
+# Dashboard
+## Installation
+#### Install snap
+```
+sudo apt install snapd
+```
+#### Reboot
+```
+sudo reboot
+```
+#### Install `core` snap
+```
+sudo snap install core
+```
+#### Install flutter
+```
+sudo snap install flutter --classic
+```
+#### Run flutter doctor
+```
+flutter doctor
+```
+#### Update PATH
+in your `~/.bashrc`, add this line:
+```
+export PATH="$PATH:{FLUTTER_SDK_PATH}/bin"
+```
+> Hint: to get the flutter sdk path, run this command: 
+>	```
+>	flutter sdk-path
+> ```
 
-A new Flutter project.
+#### Install linux requirements:
+```
+sudo apt install \
+	clang \
+	cmake \
+	ninja-build \
+	pkg-config \
+	libgtk-3-dev \
+	liblzma-dev
+```
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Run
+```
+flutter run --release
+```
