@@ -10,10 +10,10 @@ class piracerService():
     <node>
         <interface name='com.example.piracerService'>
             <method name='getVoltage'>
-                <arg type='i' name='message' direction='out'/>
+                <arg type='d' name='message' direction='out'/>
             </method>
             <method name='getCurrent'>
-                <arg type='i' name='message' direction='out'/>
+                <arg type='d' name='message' direction='out'/>
             </method>
         </interface>
     </node>

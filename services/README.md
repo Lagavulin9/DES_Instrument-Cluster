@@ -59,6 +59,7 @@ The CAN Receiver Service reads data packets from the CAN bus and updates RPM and
 ## DBUS Interface (CAN Receiver)
 Interface Name: `com.example.canService`
 Object Path: `/com/example/canService`
+> Note: By default object path follows the name of the interface
 ```
 <method name='getDis'>
 	<arg type='i' name='message' direction='out'/>
@@ -79,6 +80,7 @@ The PiRacer Service communicates with the PiRacer vehicle and fetches battery-re
 ## DBUS Interface (PiRacer)
 Interface Name: `com.example.piracerService`
 Object Path: `/com/example/piracerService`
+> Note: By default object path follows the name of the interface
 ```
 <method name='getVoltage'>
 	<arg type='d' name='message' direction='out'/>
