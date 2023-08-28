@@ -44,6 +44,7 @@ class piracerService():
             steering = -gamepad_input.analog_stick_left.x
             self.piracer.set_throttle_percent(throttle)
             self.piracer.set_steering_percent(steering)
+            time.sleep(0.03)
 
     def getVoltage(self) -> int:
         return self.battery_voltage
