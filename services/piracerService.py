@@ -10,10 +10,10 @@ class piracerService():
     <node>
         <interface name='com.example.piracerService'>
             <method name='getVoltage'>
-                <arg type='i' name='message' direction='out'/>
+                <arg type='d' name='message' direction='out'/>
             </method>
             <method name='getCurrent'>
-                <arg type='i' name='message' direction='out'/>
+                <arg type='d' name='message' direction='out'/>
             </method>
         </interface>
     </node>
@@ -30,7 +30,8 @@ class piracerService():
         self.control_thread = threading.Thread(target=self.control_piracer)
         self.control_thread.daemon = True
         self.control_thread.start()
-
+        
+    
     def update_values(self) -> None:
         while True:
             self.battery_voltage = self.piracer.get_battery_voltage()
@@ -40,15 +41,16 @@ class piracerService():
     def control_piracer(self) -> None:
         while True:
             gamepad_input = self.shanwan_gamepad.read_data()
-            throttle = gamepad_input.analog_stick_right.y * 0.5
+            throttle = gamepad_input.analog_stick_right.y * -0.5
             steering = -gamepad_input.analog_stick_left.x
             self.piracer.set_throttle_percent(throttle)
             self.piracer.set_steering_percent(steering)
+            time.sleep(0.03)
 
-    def getVoltage(self) -> int:
+    def getVoltage(self) -> float:
         return self.battery_voltage
 
-    def getCurrent(self) -> int:
+    def getCurrent(self) -> float:
         return self.battery_current
 
 bus = SessionBus()
